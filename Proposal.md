@@ -24,7 +24,7 @@ However, when there is conlict while quorum is being reached, concurrent writes 
 $$
 \begin{align}
   &ps = \text{the preference score, where higher score indicates a higher chance of being selected} \\
-  &v_{curr} = \text{the current version of the state, which is also is the total number of successful writes}
+  &v_{curr} = \text{the current version of the state, which is also is the total number of successful writes} \\
   &w_{recr} = \text{the weight applied to redundant proposal copies} \\ 
   &w_{RS} = \text{the weight applied to the reputation score}
 \end{align}
@@ -42,8 +42,8 @@ Proposals will be considered successful based on which proposal has the highest 
 
 $$
 \begin{align}
-  &ps = w_{recr}\times{\text{number of redundant proposals}} +  w_{RS}\times{} \\
-  &(w_{recr} + w{RS})\le{1}
+  &ps = w_{recr}\times{\text{number of redundant proposals}} +  w_{RS}\times{RS} \\
+  &(w_{recr} + w_{RS})\le{1}
 \end{align}
 $$
 
@@ -53,7 +53,7 @@ On each successful write to the state machine from a particular node in the clus
 
 $$
 \begin{align}
-  &RS = log_{m}(\div{\text{total historical successes}}{v_{curr}})
+  &RS = log_{m}(\text{total historical successes}\div{v_{curr}})
 \end{align}
 $$
 
@@ -114,7 +114,7 @@ $$
 
 $$
 \begin{align}
-  &T_R = \text{Redundancy Threshold: the threshold hit or exceeded for the number of redundant copies received to determine that quorum}
+  &T_R = \text{Redundancy Threshold: the threshold hit or exceeded for the number of redundant copies received to determine quorum}
 \end{align}
 $$
 
@@ -256,6 +256,8 @@ $$
   &v_{curr} = \text{the current version of the state} \\
   &v_{next} = \text{the proposed version tag for a state machine update} \\
   &s = \text{the total number of successful sequential writes}
+  &N_{base} = \text{the base number of squaring operations to use}
+  &N_{s} = \text{N dynamically adujsted after s sequential successful writes}
 \end{align}
 $$
 
@@ -277,7 +279,15 @@ $$
 $$
 
 $$
-  &VDF(g, p, v_{next}, s) = g^v_{next}^2^(N\times{\sq{s}})\mod{p}
+\begin{align}
+  &N_{s} = N_{base}\times{\sqrt{s}}
+\end{align}
+$$
+
+$$
+\begin{align}
+  &VDF(g, p, v_{next}, s) = g^{v_{next}^{2^{N_{s}}}}\mod{p}
+\end{align}
 $$
 
 Where the computation for the `vdf` is as follows. $s$, the total successful sequential writes, is used to increase the value of N, where N is multiplied by the swuare root of the number of successfuly sequential writes, so that each attempt to write multiple proposals to the state machine will take increasingly longer, but not at such a rapid growth that clusters with smaller $n$ will be hurt at each iteration.
