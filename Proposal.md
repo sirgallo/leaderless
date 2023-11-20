@@ -278,19 +278,21 @@ $$
 \end{align}
 $$
 
+$N_{s}$ is calculated by taking $N_{base}$ and multiplying it by the square root of the current $s$, so $N_{s}$ will grow slowly for the first few iterations then exponentially grow.
+
 $$
 \begin{align}
   &N_{s} = N_{base}\times{\sqrt{s}}
 \end{align}
 $$
 
+Where the computation for the `vdf` is as follows. $s$, the total successful sequential writes, is used to increase the value of $N$, where $N$ is multiplied by the square root of the number of successfuly sequential writes, so that each attempt to write multiple proposals to the state machine will take increasingly longer, but not at such a rapid growth that clusters with smaller number of machines will be hurt at each iteration.
+
 $$
 \begin{align}
   &VDF(g, p, v_{next}, s) = g^{v_{next}^{2^{N_{s}}}}\mod{p}
 \end{align}
 $$
-
-Where the computation for the `vdf` is as follows. $s$, the total successful sequential writes, is used to increase the value of $N$, where $N$ is multiplied by the square root of the number of successfuly sequential writes, so that each attempt to write multiple proposals to the state machine will take increasingly longer, but not at such a rapid growth that clusters with smaller number of machines will be hurt at each iteration.
 
 The value for $N$ is a major determinant in the total time to solve the VDF, so in this situation a smaller value should be selected where the total iterations results in a delay of between 50-100ms, so that responses to clients on write requests return within a reasonable wait time. 
 
