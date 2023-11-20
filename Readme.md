@@ -2,4 +2,4 @@
 
 ## A Leaderless Distributed Consensus Algorithm
 
-[./Proposal]
+[Proposal](./Proposal.md)
