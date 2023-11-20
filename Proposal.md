@@ -45,6 +45,7 @@ The above can be calculated as follows to approximate the threshold for minimum 
 
 $$
 \textbf{Constants} \\
+
 \begin{align}
   &Q = \text{Quorum Factor: percentage of active nodes required to achieve quorum, set to 0.66}
 \end{align}
@@ -52,6 +53,7 @@ $$
 
 $$
 \textbf{Variables} \\
+
 \begin{align}
   &n = \text{Total Nodes: the number of active nodes in the network} \\ 
   &m = \text{Propagation Factor: the number of nodes to which a node can propagate data} \\
@@ -61,6 +63,7 @@ $$
 
 $$
 \textbf{Result} \\
+
 \begin{align}
   &T_R = \text{Redundancy Threshold: the threshold hit or exceeded for the number of redundant copies received to determine that quorum}
 \end{align}
@@ -68,6 +71,7 @@ $$
 
 $$
 \textbf{Assumptions} \\
+
 \begin{align*}
   &\bullet \text{No initial redundancy} \\
   &\bullet \text{Uniform probability of data distribution between nodes} \\
@@ -132,7 +136,13 @@ $$
   &R_{i_{\text{recr}}} = \text{the number of unique redundant messages a node has after $i_{\text{recr}}$ rounds} \\
   &p_{\text{recr}, i_{\text{recr}}} = \text{the probability a node receives a new unique redendant message in round network hop $i$} \\
   &q_{\text{recr}, i_{\text{recr}}} = \text{the probability of a failure on a single trial} \\
-  &p_{\text{original}, i_{\text{recr}}} = \text{the probability a node has already received the original message, so $p_{\text{original}, i_{\text{recr}}} = P_{\text{received new message by $i_{\text{recr}}$}}$}
+  &p_{\text{original}, i_{\text{recr}}} = \text{the probability a node has already received the original message}
+\end{align}
+$$
+
+$$
+\begin{align}
+  &p_{\text{original}, i_{\text{recr}}} = P_{\text{received new message by $i_{\text{recr}}$}}
 \end{align}
 $$
 
