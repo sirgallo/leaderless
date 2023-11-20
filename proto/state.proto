@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package lerpc;
+option go_package = "./proto/state";
+
+
+service ProposalService {
+  rpc StateRPC(stream SwapState) returns (SwapStateComplete);
+}
+
+message SwapState {
+  uint64 VersionTag = 1;
+  bytes CorrectState = 2;
+}
+
+message SwapStateComplete {
+  bool Success = 1;
+}

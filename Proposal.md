@@ -1,4 +1,4 @@
-# Leaderless
+# Athn
 
 ## A Proposal for a Leaderless Distributed Consensus Algorithm with Global Versioning and Reputation Based Conflict Resolution
 
@@ -8,14 +8,17 @@
 
 ## Proposal 
 
-Consensus on global state in a distributed network of nodes is managed through a combination of data propagation through a gossip protocol and proposal redunancy, global versioning, and a reputation based conflict resolution system. The system is meant to mimic the transfer of information between people, where information is spread out similar to an epidemic model, and information from more reputable sources, or the same information coming from many unique individuals, can determine the speed or scale at which data is accepted.
+This proposal demonstrates a system that is meant to mimic the transfer of information between people, where information is spread out similar to an epidemic model, and information from more reputable sources, or the same information coming from many unique individuals, can determine the speed or scale at which data is accepted. Consensus on the global state in the system is managed through a combination of data propagation through a gossip protocol and proposal redunancy, global versioning inspired by `multi-version concurrency control`, and a reputation based conflict resolution system.
 
-A request to update state will create a proposal, which is a mutated copy of the current state with the request update on the current writer, where a `vdf` is then computed with the `current version of the state + 1` to symbolize the next version with the updated state change proposal. The proposal is then propagated through the nodes of the network using a gossip protocol, with each node updating its current copy of the data with the proposed version. A reputation based model will be used to resolve conflicts where two nodes submit a data copy with the same version at the same time, favoring nodes with a long track record of accurate state change updates.
+
+## Overview
+
+A request to update state will create a proposal, which is a mutated copy of the current state with the update from the request on the node that received it in the system. A `vdf` is then computed with the `current version of the state + 1` to symbolize the next version with the updated state change proposal. The proposal is then propagated through the nodes of the network using a gossip protocol, with each node updating its current copy of the data with the proposed version. A reputation based model will be used to resolve conflicts where two nodes submit a data copy with the same version at the same time, favoring nodes with a long track record of accurate state change updates.
 
 
 ## Reputation Based Conflict Resolution Model
 
-When two nodes attempt to modify the same version of the state concurrently and both submit proposals, the proposal is then propagated through the network of nodes using the `proposal redundancy` model, where a singular copy of the version will eventually be copied up to the `redundancy threshold` times or greater on a majority of nodes in the network. 
+When two nodes attempt to modify the same version of the state concurrently and both submit new state proposals, the proposal is then propagated through the network of nodes using the `proposal redundancy` model, where a singular copy of the version will eventually be copied up to the `redundancy threshold` times or greater on a majority of nodes in the network. 
 
 However, when there is conlict while quorum is being reached, concurrent writes to the same proposal version are handled through a reputation based conlict resolution model where the state change proposal coming from a node with a longer track record of historical successful writes to the state machine will be weighted heavier over other state change proposals with the same version tag in conjunction with a weight applied for total redundant proposal copies on a node attempting to broadcast its view of the state.
 
@@ -47,7 +50,7 @@ $$
 \end{align}
 $$
 
-The rejected state proposals will be then be retried with the next version of the state once an individual proposal has been accepted by the quorum and written to the state machine, where each failed attempt will be retried it exponentially longer until a maximum number of retries have occured, using an exponential backoff strategy.
+The rejected state proposals will be retried with the next version of the state once an individual proposal has been accepted by the quorum and written to the state machine, where each failed attempt uses an exponential backoff strategy. 
 
 On each successful write to the state machine from a particular node in the cluster, the node's reputation will increase logarithmically, with a base of $m$, the `propagation factor`. The node's score should increase logarithmically with the total number of direct interactions it has. Before applying the logarithm, the historical successes are divided by the version number, since the version number is the total number of global successful writes, reducing the overall size of the input.
 

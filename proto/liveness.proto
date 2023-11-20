@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package lerpc;
+option go_package = "./proto/liveness";
+
+
+service LivenessService {
+  rpc LivenessRPC(Liveness) returns (Liveness) {}
+}
+
+message Liveness {
+  uint64 GlobalVersion = 1;
+  NodeInfo Sender = 3;
+  repeated NodeInfo NeighborInfo = 4;
+}
+
+message NodeInfo {
+  bytes NodeId = 1;
+  bool OK = 2;
+  uint64 HistoricalWrites = 3;
+}

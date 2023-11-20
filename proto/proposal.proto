@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package lerpc;
+option go_package = "./proto/proposal";
+
+
+service ProposalService {
+  rpc ProposalRPC(Proposal) returns (Proposal) {}
+}
+
+message Proposal {
+  uint64 VersionTag = 1;
+  bytes Proposer = 2;
+  ProposalPayload Payload = 3;
+}
+
+message ProposalPayload {
+  string Operation = 1;
+  bytes ModifiedState = 2;
+}
