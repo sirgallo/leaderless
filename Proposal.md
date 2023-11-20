@@ -255,8 +255,8 @@ $$
 \begin{align}
   &v_{curr} = \text{the current version of the state} \\
   &v_{next} = \text{the proposed version tag for a state machine update} \\
-  &s = \text{the total number of successful sequential writes}
-  &N_{base} = \text{the base number of squaring operations to use}
+  &s = \text{the total number of successful sequential writes} \\
+  &N_{base} = \text{the base number of squaring operations to use} \\
   &N_{s} = \text{N dynamically adujsted after s sequential successful writes}
 \end{align}
 $$
@@ -290,7 +290,7 @@ $$
 \end{align}
 $$
 
-Where the computation for the `vdf` is as follows. $s$, the total successful sequential writes, is used to increase the value of N, where N is multiplied by the swuare root of the number of successfuly sequential writes, so that each attempt to write multiple proposals to the state machine will take increasingly longer, but not at such a rapid growth that clusters with smaller $n$ will be hurt at each iteration.
+Where the computation for the `vdf` is as follows. $s$, the total successful sequential writes, is used to increase the value of $N$, where $N$ is multiplied by the square root of the number of successfuly sequential writes, so that each attempt to write multiple proposals to the state machine will take increasingly longer, but not at such a rapid growth that clusters with smaller number of machines will be hurt at each iteration.
 
 The value for $N$ is a major determinant in the total time to solve the VDF, so in this situation a smaller value should be selected where the total iterations results in a delay of between 50-100ms, so that responses to clients on write requests return within a reasonable wait time. 
 
