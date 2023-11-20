@@ -43,17 +43,17 @@ A node can only make one proposal to state change per version and cannot then pr
 
 The above can be calculated as follows to approximate the threshold for minimum number of redundant copies an individual node in the cluster must receive to assume that the data copy proposal has been accepted by the minimum number of nodes to achieve quorum.
 
-$$
-\textbf{Constants} \\
+`Constants`
 
+$$
 \begin{align}
   &Q = \text{Quorum Factor: percentage of active nodes required to achieve quorum, set to 0.66}
 \end{align}
 $$
 
-$$
-\textbf{Variables} \\
+`Variables`
 
+$$
 \begin{align}
   &n = \text{Total Nodes: the number of active nodes in the network} \\ 
   &m = \text{Propagation Factor: the number of nodes to which a node can propagate data} \\
@@ -61,17 +61,17 @@ $$
 \end{align}
 $$
 
-$$
-\textbf{Result} \\
+`Result`
 
+$$
 \begin{align}
   &T_R = \text{Redundancy Threshold: the threshold hit or exceeded for the number of redundant copies received to determine that quorum}
 \end{align}
 $$
 
-$$
-\textbf{Assumptions} \\
+`Assumptions`
 
+$$
 \begin{align*}
   &\bullet \text{No initial redundancy} \\
   &\bullet \text{Uniform probability of data distribution between nodes} \\
