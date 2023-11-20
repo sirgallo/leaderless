@@ -174,6 +174,7 @@ $$
 $R(k)$ will approach $1$ as the number of rounds increases.
 
 To get the probability of one node getting exactly $T_R$ redundant messages after $i$ rounds, the following is calculated:
+
 $$
 \begin{align}
   &P_{\text{exact}, i_{\text{recr}}}(T_R) = R(i) - R(i - 1)
