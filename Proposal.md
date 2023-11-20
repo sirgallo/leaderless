@@ -59,6 +59,8 @@ $$
 
 The logarithmic nature of reputation growth is meant to create a more democratic and fair system, where issues like reputation inflation can be mitigated since reputation will grow quickly as a node makes more successful writes once it joins the network, but will flatten out over time the more writes are made. This helps to ensure that nodes that are new to the network or that have low activity are not punished and are actually encouraged to make successful writes. This logarithmic reputation growth is meant to again mimic how reputation works in social settings, where unknown individuals can quickly gain reputation, but once more people learn about that individual, the reputation begins to flatten out until attrition is reached.
 
+Since a node is essentially linked to a unique identifier, the unique id would be persisted even if a node goes offline, along with its historical successful writes to the state machine.
+
 
 ## Assumed Quorum through a Gossip Protocol and State Change Proposal Redundancy
 
@@ -253,7 +255,7 @@ $$
 \begin{align}
   &v_{curr} = \text{the current version of the state} \\
   &v_{next} = \text{the proposed version tag for a state machine update} \\
-  &N = \text{the total number of squaring operations, which sets the delay}
+  &s = \text{the total number of successful sequential writes}
 \end{align}
 $$
 
@@ -274,13 +276,13 @@ $$
 \end{align}
 $$
 
-Where the computation for the `vdf` is as follows:
-
 $$
-  &VDF(g, p, v_{next}) = g^v_{next}^2^N\mod{p}
+  &VDF(g, p, v_{next}, s) = g^v_{next}^2^(N\times{\sq{s}})\mod{p}
 $$
 
-The value for $N$ is a major determinant in the total time to solve the VDF, so in this situation a smaller value should be selected where the total iterations results in a delay of between 50-100ms, so that responses to clients on write requests return within a reasonable wait time.
+Where the computation for the `vdf` is as follows. $s$, the total successful sequential writes, is used to increase the value of N, where N is multiplied by the swuare root of the number of successfuly sequential writes, so that each attempt to write multiple proposals to the state machine will take increasingly longer, but not at such a rapid growth that clusters with smaller $n$ will be hurt at each iteration.
+
+The value for $N$ is a major determinant in the total time to solve the VDF, so in this situation a smaller value should be selected where the total iterations results in a delay of between 50-100ms, so that responses to clients on write requests return within a reasonable wait time. 
 
 
 ## Heartbeating Through Propagation
