@@ -1,0 +1,119 @@
+version: "3"
+services:
+  athnproxy: 
+    image: haproxy-athn-img
+    container_name: haproxy_athn_cont
+    hostname: ${HOSTNAME}
+    build:
+      context: ../../
+      dockerfile: ./lb/Dockerfile.athn.lb
+    volumes:
+      - ../../certs:/certs
+    ports: 
+      - '127.0.0.1:443:443'
+    networks:
+      cluster_network:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: '512M'
+    depends_on:
+      - athnsrv1
+      - athnsrv2
+      - athnsrv3
+      - athnsrv4
+      - athnsrv5
+  athnsrv1:
+    image: athnsrv1_img
+    container_name: athnsrv1_cont
+    hostname: athnsrv1
+    build:
+      context: ../../
+      dockerfile: ./cmd/athn/Dockerfile
+    networks:
+      cluster_network:
+    ports:
+      - 8080
+      - 2345
+      - 3456
+      - 4567
+    volumes:
+      - $HOME/athnsrv1/globals:/home/athn/globals
+      - $HOME/athnsrv1/proposal_cache:/home/athn/proposal_cache
+      - $HOME/athnsrv1/state:/home/athn/state
+  athnsrv2:
+    image: athnsrv2_img
+    container_name: athnsrv2_cont
+    hostname: athnsrv2
+    build:
+      context: ../../
+      dockerfile: ./cmd/athn/Dockerfile
+    networks:
+      cluster_network:
+    ports:
+      - 8080
+      - 2345
+      - 3456
+      - 4567
+    volumes:
+      - $HOME/athnsrv2/globals:/home/athn/globals
+      - $HOME/athnsrv2/proposal_cache:/home/athn/proposal_cache
+      - $HOME/athnsrv2/state:/home/athn/state
+  athnsrv3:
+    image: athnsrv3_img
+    container_name: athnsrv3_cont
+    hostname: athnsrv3
+    build:
+      context: ../../
+      dockerfile: ./cmd/athn/Dockerfile
+    networks:
+      cluster_network:
+    ports:
+      - 8080
+      - 2345
+      - 3456
+      - 4567
+    volumes:
+      - $HOME/athnsrv3/globals:/home/athn/globals
+      - $HOME/athnsrv3/proposal_cache:/home/athn/proposal_cache
+      - $HOME/athnsrv3/state:/home/athn/state
+  athnsrv4:
+    image: athnsrv4_img
+    container_name: athnsrv4_cont
+    hostname: athnsrv4
+    build:
+      context: ../../
+      dockerfile: ./cmd/athn/Dockerfile
+    networks:
+      cluster_network:
+    ports:
+      - 8080
+      - 2345
+      - 3456
+      - 4567
+    volumes:
+      - $HOME/athnsrv4/globals:/home/athn/globals
+      - $HOME/athnsrv4/proposal_cache:/home/athn/proposal_cache
+      - $HOME/athnsrv4/state:/home/athn/state
+  athnsrv5:
+    image: athnsrv5_img
+    container_name: athnsrv5_cont
+    hostname: athnsrv5
+    build:
+      context: ../../
+      dockerfile: ./cmd/athn/Dockerfile
+    networks:
+      cluster_network:
+    ports:
+      - 8080
+      - 2345
+      - 3456
+      - 4567
+    volumes:
+      - $HOME/athnsrv5/globals:/home/athn/globals
+      - $HOME/athnsrv5/proposal_cache:/home/athn/proposal_cache
+      - $HOME/athnsrv5/state:/home/athn/state
+networks:
+  cluster_network:
+    driver: bridge
