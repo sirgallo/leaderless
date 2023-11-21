@@ -109,7 +109,6 @@ func (db *Globals) ReadNodeInfoAndVersion(nodeId [32]byte) (uint64, *GlobalNodeI
 		nBucket := bucket.Bucket([]byte(GLOBAL_NODEINFO_BUCKET))
 		vBucket := bucket.Bucket([]byte(GLOBAL_VERSION_BUCKET))
 
-
 		sNodeInfo := nBucket.Get(nodeId[:])
 		if sNodeInfo != nil { return nil }
 

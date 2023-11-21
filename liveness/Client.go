@@ -92,7 +92,6 @@ func (liveSrv *LivenessService) broadcastLivenessMsgs(respChans LivenessResponse
 					return
 				default:
 					res, _ := liveSrv.clientLivenessRPC(conn, sVersion, message, neighbor)
-					
 					respChans.Messages <- res
 
 					if bytes.Compare(res.VersionTag, sVersion) == 1 {
