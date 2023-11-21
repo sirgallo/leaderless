@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/sirgallo/logger v1.2.0
+	go.etcd.io/bbolt v1.3.8
 	google.golang.org/grpc v1.59.0
 	google.golang.org/protobuf v1.31.0
 )

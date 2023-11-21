@@ -19,48 +19,48 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ProposalService_StateRPC_FullMethodName = "/lerpc.ProposalService/StateRPC"
+	State_StateRPC_FullMethodName = "/lerpc.State/StateRPC"
 )
 
-// ProposalServiceClient is the client API for ProposalService service.
+// StateClient is the client API for State service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ProposalServiceClient interface {
-	StateRPC(ctx context.Context, opts ...grpc.CallOption) (ProposalService_StateRPCClient, error)
+type StateClient interface {
+	StateRPC(ctx context.Context, opts ...grpc.CallOption) (State_StateRPCClient, error)
 }
 
-type proposalServiceClient struct {
+type stateClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewProposalServiceClient(cc grpc.ClientConnInterface) ProposalServiceClient {
-	return &proposalServiceClient{cc}
+func NewStateClient(cc grpc.ClientConnInterface) StateClient {
+	return &stateClient{cc}
 }
 
-func (c *proposalServiceClient) StateRPC(ctx context.Context, opts ...grpc.CallOption) (ProposalService_StateRPCClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ProposalService_ServiceDesc.Streams[0], ProposalService_StateRPC_FullMethodName, opts...)
+func (c *stateClient) StateRPC(ctx context.Context, opts ...grpc.CallOption) (State_StateRPCClient, error) {
+	stream, err := c.cc.NewStream(ctx, &State_ServiceDesc.Streams[0], State_StateRPC_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &proposalServiceStateRPCClient{stream}
+	x := &stateStateRPCClient{stream}
 	return x, nil
 }
 
-type ProposalService_StateRPCClient interface {
+type State_StateRPCClient interface {
 	Send(*SwapState) error
 	CloseAndRecv() (*SwapStateComplete, error)
 	grpc.ClientStream
 }
 
-type proposalServiceStateRPCClient struct {
+type stateStateRPCClient struct {
 	grpc.ClientStream
 }
 
-func (x *proposalServiceStateRPCClient) Send(m *SwapState) error {
+func (x *stateStateRPCClient) Send(m *SwapState) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *proposalServiceStateRPCClient) CloseAndRecv() (*SwapStateComplete, error) {
+func (x *stateStateRPCClient) CloseAndRecv() (*SwapStateComplete, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
@@ -71,53 +71,53 @@ func (x *proposalServiceStateRPCClient) CloseAndRecv() (*SwapStateComplete, erro
 	return m, nil
 }
 
-// ProposalServiceServer is the server API for ProposalService service.
-// All implementations must embed UnimplementedProposalServiceServer
+// StateServer is the server API for State service.
+// All implementations must embed UnimplementedStateServer
 // for forward compatibility
-type ProposalServiceServer interface {
-	StateRPC(ProposalService_StateRPCServer) error
-	mustEmbedUnimplementedProposalServiceServer()
+type StateServer interface {
+	StateRPC(State_StateRPCServer) error
+	mustEmbedUnimplementedStateServer()
 }
 
-// UnimplementedProposalServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedProposalServiceServer struct {
+// UnimplementedStateServer must be embedded to have forward compatible implementations.
+type UnimplementedStateServer struct {
 }
 
-func (UnimplementedProposalServiceServer) StateRPC(ProposalService_StateRPCServer) error {
+func (UnimplementedStateServer) StateRPC(State_StateRPCServer) error {
 	return status.Errorf(codes.Unimplemented, "method StateRPC not implemented")
 }
-func (UnimplementedProposalServiceServer) mustEmbedUnimplementedProposalServiceServer() {}
+func (UnimplementedStateServer) mustEmbedUnimplementedStateServer() {}
 
-// UnsafeProposalServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ProposalServiceServer will
+// UnsafeStateServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StateServer will
 // result in compilation errors.
-type UnsafeProposalServiceServer interface {
-	mustEmbedUnimplementedProposalServiceServer()
+type UnsafeStateServer interface {
+	mustEmbedUnimplementedStateServer()
 }
 
-func RegisterProposalServiceServer(s grpc.ServiceRegistrar, srv ProposalServiceServer) {
-	s.RegisterService(&ProposalService_ServiceDesc, srv)
+func RegisterStateServer(s grpc.ServiceRegistrar, srv StateServer) {
+	s.RegisterService(&State_ServiceDesc, srv)
 }
 
-func _ProposalService_StateRPC_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(ProposalServiceServer).StateRPC(&proposalServiceStateRPCServer{stream})
+func _State_StateRPC_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(StateServer).StateRPC(&stateStateRPCServer{stream})
 }
 
-type ProposalService_StateRPCServer interface {
+type State_StateRPCServer interface {
 	SendAndClose(*SwapStateComplete) error
 	Recv() (*SwapState, error)
 	grpc.ServerStream
 }
 
-type proposalServiceStateRPCServer struct {
+type stateStateRPCServer struct {
 	grpc.ServerStream
 }
 
-func (x *proposalServiceStateRPCServer) SendAndClose(m *SwapStateComplete) error {
+func (x *stateStateRPCServer) SendAndClose(m *SwapStateComplete) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *proposalServiceStateRPCServer) Recv() (*SwapState, error) {
+func (x *stateStateRPCServer) Recv() (*SwapState, error) {
 	m := new(SwapState)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -125,17 +125,17 @@ func (x *proposalServiceStateRPCServer) Recv() (*SwapState, error) {
 	return m, nil
 }
 
-// ProposalService_ServiceDesc is the grpc.ServiceDesc for ProposalService service.
+// State_ServiceDesc is the grpc.ServiceDesc for State service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ProposalService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "lerpc.ProposalService",
-	HandlerType: (*ProposalServiceServer)(nil),
+var State_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lerpc.State",
+	HandlerType: (*StateServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "StateRPC",
-			Handler:       _ProposalService_StateRPC_Handler,
+			Handler:       _State_StateRPC_Handler,
 			ClientStreams: true,
 		},
 	},

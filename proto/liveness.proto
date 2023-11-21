@@ -4,18 +4,19 @@ package lerpc;
 option go_package = "./proto/liveness";
 
 
-service LivenessService {
-  rpc LivenessRPC(Liveness) returns (Liveness) {}
+service Liveness {
+  rpc LivenessRPC(LivenessMessage) returns (LivenessMessage) {}
 }
 
-message Liveness {
+message LivenessMessage {
   uint64 GlobalVersion = 1;
   NodeInfo Sender = 3;
   repeated NodeInfo NeighborInfo = 4;
 }
 
 message NodeInfo {
-  bytes NodeId = 1;
-  bool OK = 2;
-  uint64 HistoricalWrites = 3;
+  string Host = 1;
+  bytes NodeId = 2;
+  bool OK = 3;
+  uint64 SuccessfulWrites = 4;
 }

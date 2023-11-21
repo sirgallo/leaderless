@@ -19,89 +19,89 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	LivenessService_LivenessRPC_FullMethodName = "/lerpc.LivenessService/LivenessRPC"
+	Liveness_LivenessRPC_FullMethodName = "/lerpc.Liveness/LivenessRPC"
 )
 
-// LivenessServiceClient is the client API for LivenessService service.
+// LivenessClient is the client API for Liveness service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type LivenessServiceClient interface {
-	LivenessRPC(ctx context.Context, in *Liveness, opts ...grpc.CallOption) (*Liveness, error)
+type LivenessClient interface {
+	LivenessRPC(ctx context.Context, in *LivenessMessage, opts ...grpc.CallOption) (*LivenessMessage, error)
 }
 
-type livenessServiceClient struct {
+type livenessClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewLivenessServiceClient(cc grpc.ClientConnInterface) LivenessServiceClient {
-	return &livenessServiceClient{cc}
+func NewLivenessClient(cc grpc.ClientConnInterface) LivenessClient {
+	return &livenessClient{cc}
 }
 
-func (c *livenessServiceClient) LivenessRPC(ctx context.Context, in *Liveness, opts ...grpc.CallOption) (*Liveness, error) {
-	out := new(Liveness)
-	err := c.cc.Invoke(ctx, LivenessService_LivenessRPC_FullMethodName, in, out, opts...)
+func (c *livenessClient) LivenessRPC(ctx context.Context, in *LivenessMessage, opts ...grpc.CallOption) (*LivenessMessage, error) {
+	out := new(LivenessMessage)
+	err := c.cc.Invoke(ctx, Liveness_LivenessRPC_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// LivenessServiceServer is the server API for LivenessService service.
-// All implementations must embed UnimplementedLivenessServiceServer
+// LivenessServer is the server API for Liveness service.
+// All implementations must embed UnimplementedLivenessServer
 // for forward compatibility
-type LivenessServiceServer interface {
-	LivenessRPC(context.Context, *Liveness) (*Liveness, error)
-	mustEmbedUnimplementedLivenessServiceServer()
+type LivenessServer interface {
+	LivenessRPC(context.Context, *LivenessMessage) (*LivenessMessage, error)
+	mustEmbedUnimplementedLivenessServer()
 }
 
-// UnimplementedLivenessServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedLivenessServiceServer struct {
+// UnimplementedLivenessServer must be embedded to have forward compatible implementations.
+type UnimplementedLivenessServer struct {
 }
 
-func (UnimplementedLivenessServiceServer) LivenessRPC(context.Context, *Liveness) (*Liveness, error) {
+func (UnimplementedLivenessServer) LivenessRPC(context.Context, *LivenessMessage) (*LivenessMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LivenessRPC not implemented")
 }
-func (UnimplementedLivenessServiceServer) mustEmbedUnimplementedLivenessServiceServer() {}
+func (UnimplementedLivenessServer) mustEmbedUnimplementedLivenessServer() {}
 
-// UnsafeLivenessServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to LivenessServiceServer will
+// UnsafeLivenessServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LivenessServer will
 // result in compilation errors.
-type UnsafeLivenessServiceServer interface {
-	mustEmbedUnimplementedLivenessServiceServer()
+type UnsafeLivenessServer interface {
+	mustEmbedUnimplementedLivenessServer()
 }
 
-func RegisterLivenessServiceServer(s grpc.ServiceRegistrar, srv LivenessServiceServer) {
-	s.RegisterService(&LivenessService_ServiceDesc, srv)
+func RegisterLivenessServer(s grpc.ServiceRegistrar, srv LivenessServer) {
+	s.RegisterService(&Liveness_ServiceDesc, srv)
 }
 
-func _LivenessService_LivenessRPC_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Liveness)
+func _Liveness_LivenessRPC_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LivenessMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LivenessServiceServer).LivenessRPC(ctx, in)
+		return srv.(LivenessServer).LivenessRPC(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: LivenessService_LivenessRPC_FullMethodName,
+		FullMethod: Liveness_LivenessRPC_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LivenessServiceServer).LivenessRPC(ctx, req.(*Liveness))
+		return srv.(LivenessServer).LivenessRPC(ctx, req.(*LivenessMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// LivenessService_ServiceDesc is the grpc.ServiceDesc for LivenessService service.
+// Liveness_ServiceDesc is the grpc.ServiceDesc for Liveness service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var LivenessService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "lerpc.LivenessService",
-	HandlerType: (*LivenessServiceServer)(nil),
+var Liveness_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lerpc.Liveness",
+	HandlerType: (*LivenessServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "LivenessRPC",
-			Handler:    _LivenessService_LivenessRPC_Handler,
+			Handler:    _Liveness_LivenessRPC_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

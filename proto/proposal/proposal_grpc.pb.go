@@ -19,89 +19,89 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ProposalService_ProposalRPC_FullMethodName = "/lerpc.ProposalService/ProposalRPC"
+	Proposal_ProposalRPC_FullMethodName = "/lerpc.Proposal/ProposalRPC"
 )
 
-// ProposalServiceClient is the client API for ProposalService service.
+// ProposalClient is the client API for Proposal service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ProposalServiceClient interface {
-	ProposalRPC(ctx context.Context, in *Proposal, opts ...grpc.CallOption) (*Proposal, error)
+type ProposalClient interface {
+	ProposalRPC(ctx context.Context, in *ProposalRequest, opts ...grpc.CallOption) (*ProposalRequest, error)
 }
 
-type proposalServiceClient struct {
+type proposalClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewProposalServiceClient(cc grpc.ClientConnInterface) ProposalServiceClient {
-	return &proposalServiceClient{cc}
+func NewProposalClient(cc grpc.ClientConnInterface) ProposalClient {
+	return &proposalClient{cc}
 }
 
-func (c *proposalServiceClient) ProposalRPC(ctx context.Context, in *Proposal, opts ...grpc.CallOption) (*Proposal, error) {
-	out := new(Proposal)
-	err := c.cc.Invoke(ctx, ProposalService_ProposalRPC_FullMethodName, in, out, opts...)
+func (c *proposalClient) ProposalRPC(ctx context.Context, in *ProposalRequest, opts ...grpc.CallOption) (*ProposalRequest, error) {
+	out := new(ProposalRequest)
+	err := c.cc.Invoke(ctx, Proposal_ProposalRPC_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ProposalServiceServer is the server API for ProposalService service.
-// All implementations must embed UnimplementedProposalServiceServer
+// ProposalServer is the server API for Proposal service.
+// All implementations must embed UnimplementedProposalServer
 // for forward compatibility
-type ProposalServiceServer interface {
-	ProposalRPC(context.Context, *Proposal) (*Proposal, error)
-	mustEmbedUnimplementedProposalServiceServer()
+type ProposalServer interface {
+	ProposalRPC(context.Context, *ProposalRequest) (*ProposalRequest, error)
+	mustEmbedUnimplementedProposalServer()
 }
 
-// UnimplementedProposalServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedProposalServiceServer struct {
+// UnimplementedProposalServer must be embedded to have forward compatible implementations.
+type UnimplementedProposalServer struct {
 }
 
-func (UnimplementedProposalServiceServer) ProposalRPC(context.Context, *Proposal) (*Proposal, error) {
+func (UnimplementedProposalServer) ProposalRPC(context.Context, *ProposalRequest) (*ProposalRequest, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProposalRPC not implemented")
 }
-func (UnimplementedProposalServiceServer) mustEmbedUnimplementedProposalServiceServer() {}
+func (UnimplementedProposalServer) mustEmbedUnimplementedProposalServer() {}
 
-// UnsafeProposalServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ProposalServiceServer will
+// UnsafeProposalServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ProposalServer will
 // result in compilation errors.
-type UnsafeProposalServiceServer interface {
-	mustEmbedUnimplementedProposalServiceServer()
+type UnsafeProposalServer interface {
+	mustEmbedUnimplementedProposalServer()
 }
 
-func RegisterProposalServiceServer(s grpc.ServiceRegistrar, srv ProposalServiceServer) {
-	s.RegisterService(&ProposalService_ServiceDesc, srv)
+func RegisterProposalServer(s grpc.ServiceRegistrar, srv ProposalServer) {
+	s.RegisterService(&Proposal_ServiceDesc, srv)
 }
 
-func _ProposalService_ProposalRPC_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Proposal)
+func _Proposal_ProposalRPC_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProposalRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProposalServiceServer).ProposalRPC(ctx, in)
+		return srv.(ProposalServer).ProposalRPC(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProposalService_ProposalRPC_FullMethodName,
+		FullMethod: Proposal_ProposalRPC_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProposalServiceServer).ProposalRPC(ctx, req.(*Proposal))
+		return srv.(ProposalServer).ProposalRPC(ctx, req.(*ProposalRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ProposalService_ServiceDesc is the grpc.ServiceDesc for ProposalService service.
+// Proposal_ServiceDesc is the grpc.ServiceDesc for Proposal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ProposalService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "lerpc.ProposalService",
-	HandlerType: (*ProposalServiceServer)(nil),
+var Proposal_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lerpc.Proposal",
+	HandlerType: (*ProposalServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ProposalRPC",
-			Handler:    _ProposalService_ProposalRPC_Handler,
+			Handler:    _Proposal_ProposalRPC_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

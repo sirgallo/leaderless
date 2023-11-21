@@ -4,7 +4,7 @@ package lerpc;
 option go_package = "./proto/state";
 
 
-service ProposalService {
+service State {
   rpc StateRPC(stream SwapState) returns (SwapStateComplete);
 }
 

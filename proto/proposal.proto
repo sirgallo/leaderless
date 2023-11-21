@@ -4,17 +4,17 @@ package lerpc;
 option go_package = "./proto/proposal";
 
 
-service ProposalService {
-  rpc ProposalRPC(Proposal) returns (Proposal) {}
+service Proposal {
+  rpc ProposalRPC(ProposalRequest) returns (ProposalRequest) {}
 }
 
-message Proposal {
+message ProposalRequest {
   uint64 VersionTag = 1;
   bytes Proposer = 2;
   ProposalPayload Payload = 3;
 }
 
 message ProposalPayload {
-  string Operation = 1;
-  bytes ModifiedState = 2;
+  bytes Operation = 1;
+  bytes Update = 2;
 }

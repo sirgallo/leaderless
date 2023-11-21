@@ -3,16 +3,17 @@ package system
 import "sync"
 // import "unsafe"
 
-import "github.com/sirgallo/athn/proto/liveness"
-// import "github.com/sirgallo/athn/proto/proposal"
-
 
 type System struct {
-	host [32]byte
-	versionTag uint64
+	Host string
+	NodeId[32]byte
+	VersionTag uint64
 	// proposalChannel chan *proposal.Proposal
-	neighbors map[[32]byte] *liveness.NodeInfo
+	
+	PropagationFactor int
 
+	Neighbors *sync.Map //map[[32]byte] *liveness.NodeInfo
+	PreviousNeighbors *sync.Map // map[[32]byte] struct{}
 
 	// updateVersion *unsafe.Pointer
 	
