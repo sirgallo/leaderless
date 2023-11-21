@@ -5,7 +5,7 @@ import bolt "go.etcd.io/bbolt"
 import "github.com/sirgallo/athn/common/serialize"
 
 
-func (db *Globals) GetGlobalVersion() (uint64, error) {
+func (db *Globals) ReadVersion() (uint64, error) {
 	var version uint64
 	transaction := func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(GLOBAL_BUCKET))
@@ -27,7 +27,7 @@ func (db *Globals) GetGlobalVersion() (uint64, error) {
 	return version, nil
 }
 
-func (db *Globals) SetGlobalVersion(version uint64) error {
+func (db *Globals) SetVersion(version uint64) error {
 	transaction := func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(GLOBAL_BUCKET))
 		vBucket := bucket.Bucket([]byte(GLOBAL_VERSION_BUCKET))

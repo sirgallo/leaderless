@@ -52,11 +52,11 @@ $$
 
 The rejected state proposals will be retried with the next version of the state once an individual proposal has been accepted by the quorum and written to the state machine, where each failed attempt uses an exponential backoff strategy. 
 
-On each successful write to the state machine from a particular node in the cluster, the node's reputation will increase logarithmically, with a base of $m$, the `propagation factor`. The node's score should increase logarithmically with the total number of direct interactions it has. Before applying the logarithm, the historical successes are divided by the version number, since the version number is the total number of global successful writes, reducing the overall size of the input.
+On each successful write to the state machine from a particular node in the cluster, the node's reputation will increase logarithmically, with a base of $m$, the `propagation factor`. The node's score should increase logarithmically with the total number of direct interactions it has. Before applying the logarithm, the square root of the historical successes is taken.
 
 $$
 \begin{align}
-  &RS = log_{m}(\text{total historical successes}\div{v_{curr}})
+  &RS = log_{m}(\sqrt{\text{total historical successes}})
 \end{align}
 $$
 

@@ -100,6 +100,39 @@ func (db *Globals) ReadNodeInfo(nodeId [32]byte) (*GlobalNodeInfoValue, error) {
 	return nodeInfo, nil
 }
 
+func (db *Globals) ReadNodeInfoAndVersion(nodeId [32]byte) (uint64, *GlobalNodeInfoValue, error) {
+	var version uint64
+	var nodeInfo *GlobalNodeInfoValue
+
+	transaction := func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(GLOBAL_BUCKET))
+		nBucket := bucket.Bucket([]byte(GLOBAL_NODEINFO_BUCKET))
+		vBucket := bucket.Bucket([]byte(GLOBAL_VERSION_BUCKET))
+
+
+		sNodeInfo := nBucket.Get(nodeId[:])
+		if sNodeInfo != nil { return nil }
+
+		n, desErr := deserializeNodeInfo(sNodeInfo)
+		if desErr != nil { return desErr }
+
+		val := vBucket.Get([]byte(GLOBAL_VERSION_KEY))
+		if val == nil { return nil }
+
+		v, deserializeErr := serialize.DeserializeUint64(val)
+		if deserializeErr != nil { return deserializeErr }
+
+		nodeInfo = n
+		version = v
+		return nil
+	}
+
+	readErr := db.globalDb.View(transaction)
+	if readErr != nil { return 0, nil, readErr }
+
+	return version, nodeInfo, nil
+}
+
 func serializeNodeInfo(nodeInfo *GlobalNodeInfoValue) []byte {
 	var buffer []byte
 

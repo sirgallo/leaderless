@@ -5,9 +5,6 @@ import "context"
 import "github.com/sirgallo/athn/proto/liveness"
 
 
-//=========================================== Athn Liveness Server
-
-
 func (liveSrv *LivenessService) LivenessRPC(
 	ctx context.Context, 
 	msg *liveness.LivenessMessage,
@@ -20,8 +17,11 @@ func (liveSrv *LivenessService) LivenessRPC(
 		return true
 	})
 
+	version, readErr := liveSrv.system.Globals.ReadVersion()
+	if readErr != nil { return nil, readErr }
+
 	resp := &liveness.LivenessMessage{
-		GlobalVersion: liveSrv.system.VersionTag,
+		GlobalVersion: version,
 		Sender: &liveness.NodeInfo{
 			Host: liveSrv.system.Host,
 			NodeId: liveSrv.system.NodeId[:],

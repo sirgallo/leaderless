@@ -16,7 +16,7 @@ type ProposeServiceOpts struct {
 	System *system.System
 }
 
-type ProposeService [T request.Payload, U request.Result] struct {
+type ProposeService struct {
 	proposal.UnimplementedProposalServer
 	
 	Port string
@@ -24,8 +24,8 @@ type ProposeService [T request.Payload, U request.Result] struct {
 	system *system.System
 	zLog logger.CustomLog
 
-	ClientReqBuffer chan *request.ClientRequest[T]
-	ClientRespBuffer chan *request.ClientResponse[U]
+	ClientReqBuffer chan *request.ClientRequest
+	ClientRespBuffer chan *request.ClientResponse
 }
 
 type ProposeResponseChannels struct {

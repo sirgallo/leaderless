@@ -10,10 +10,6 @@ import "github.com/sirgallo/athn/common/utils"
 import "github.com/sirgallo/athn/proto/liveness"
 
 
-//=========================================== Athn Liveness Service
-
-
-
 func NewLivenessService(opts *LivenessServiceOpts) *LivenessService {
 	return &LivenessService{
 		Port: utils.NormalizePort(opts.Port),

@@ -3,20 +3,33 @@ package athn
 import "github.com/sirgallo/logger"
 
 import "github.com/sirgallo/athn/common/connpool"
+import "github.com/sirgallo/athn/globals"
 import "github.com/sirgallo/athn/liveness"
 import "github.com/sirgallo/athn/propose"
 import "github.com/sirgallo/athn/request"
 import "github.com/sirgallo/athn/system"
+import "github.com/sirgallo/athn/state"
 
 
-func NewAthn[T request.Payload, U request.Result](opts AthnServiceOpts) (*Athn[T, U], error) {
-	sys, newSysErr := system.NewSystem(opts.NodeSeed)
+func NewAthn(opts AthnServiceOpts) (*Athn, error) {
+	globals, openGlobalsErr := globals.NewGlobals()
+	if openGlobalsErr != nil { return nil, openGlobalsErr }
+
+	state, openStateErr := state.NewState()
+	if openStateErr != nil { return nil, openGlobalsErr }
+	
+	sysOpts := &system.SystemOpts{
+		Seed: opts.NodeSeed,
+		Globals: globals,
+		State: state,
+	}
+
+	sys, newSysErr := system.NewSystem(sysOpts)
 	if newSysErr != nil { return nil, newSysErr }
 
-	athn := &Athn[T, U]{
+	athn := &Athn{
 		ports: opts.Ports,
 		protocol: opts.Protocol,
-		system: sys,
 		zLog: *logger.NewCustomLog(NAME),
 	}
 
@@ -38,13 +51,13 @@ func NewAthn[T request.Payload, U request.Result](opts AthnServiceOpts) (*Athn[T
 	reqOpts := &request.RequestServiceOpts{ Port: opts.Ports.Request, System: sys }
 
 	athn.livenessService = liveness.NewLivenessService(lOpts)
-	athn.proposeService = propose.NewProposeService[T, U](pOpts)
-	athn.requestService = request.NewRequestService[T, U](reqOpts)
+	athn.proposeService = propose.NewProposeService(pOpts)
+	athn.requestService = request.NewRequestService(reqOpts)
 
 	return athn, nil
 }
 
-func (athn *Athn[T, U]) StartAthn() {
+func (athn *Athn) StartAthn() {
 	athn.StartModules()
 	athn.StartModulePassThroughs()
 	

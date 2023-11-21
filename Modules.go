@@ -3,7 +3,7 @@ package athn
 import "net"
 
 
-func (athn *Athn[T, U]) StartModules() {
+func (athn *Athn) StartModules() {
 	lListener, leErr := net.Listen(athn.protocol, athn.livenessService.Port)
 	if leErr != nil { athn.zLog.Error("Failed to listen: %v", leErr.Error()) }
 
@@ -14,7 +14,7 @@ func (athn *Athn[T, U]) StartModules() {
 	go athn.proposeService.StartProposeService(&pListener)
 }
 
-func (athn *Athn[T, U]) StartModulePassThroughs() {
+func (athn *Athn) StartModulePassThroughs() {
 	go func() {
 		for request := range athn.requestService.RequestBuffer {
 			athn.proposeService.ClientReqBuffer <- request

@@ -6,8 +6,8 @@ import "time"
 
 import "github.com/sirgallo/logger"
 
+import "github.com/sirgallo/athn/state"
 import "github.com/sirgallo/athn/system"
-
 
 type Payload = comparable
 type Result = comparable
@@ -17,7 +17,7 @@ type RequestServiceOpts struct {
 	System *system.System
 }
 
-type RequestService[T Payload, U Result] struct {
+type RequestService struct {
 	mux *http.ServeMux
 	
 	Port string
@@ -25,18 +25,18 @@ type RequestService[T Payload, U Result] struct {
 	zLog logger.CustomLog
 	
 	clientMappedResponseChannels sync.Map
-	RequestBuffer chan *ClientRequest[T]
-	ResponseBuffer chan *ClientResponse[U]
+	RequestBuffer chan *ClientRequest
+	ResponseBuffer chan *ClientResponse
 }
 
-type ClientRequest[T Payload] struct {
+type ClientRequest struct {
 	RequestID [32]byte `json:"-"`
-	Payload T `json:"payload"`
+	Payload state.StatePayload `json:"payload"`
 }
 
-type ClientResponse[T Result] struct {
+type ClientResponse struct {
 	RequestID [32]byte `json:"-"`
-	Result T `json:"result"`
+	Result state.KeyValuePair `json:"result"`
 	Success bool `json:"success"`
 	ErrorMsg *error `json:"error_msg"`
 }

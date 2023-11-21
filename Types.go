@@ -6,7 +6,6 @@ import "github.com/sirgallo/athn/common/connpool"
 import "github.com/sirgallo/athn/liveness"
 import "github.com/sirgallo/athn/propose"
 import "github.com/sirgallo/athn/request"
-import "github.com/sirgallo/athn/system"
 
 
 type AthnPortOpts struct {
@@ -22,16 +21,14 @@ type AthnServiceOpts struct {
 	ConnPoolOpts connpool.ConnectionPoolOpts
 }
 
-type Athn [T request.Payload, U request.Result] struct {
+type Athn struct {
 	ports AthnPortOpts
 	protocol string
-
-	system *system.System
 	zLog logger.CustomLog
 
 	livenessService *liveness.LivenessService
-	proposeService *propose.ProposeService[T, U]
-	requestService *request.RequestService[T, U]
+	proposeService *propose.ProposeService
+	requestService *request.RequestService
 }
 
 

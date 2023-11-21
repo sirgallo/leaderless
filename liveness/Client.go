@@ -8,9 +8,6 @@ import "github.com/sirgallo/athn/common/utils"
 import "github.com/sirgallo/athn/proto/liveness"
 
 
-//=========================================== Athn Liveness Client
-
-
 func (liveSrv *LivenessService) RequestLiveness() error {
 	respChans := liveSrv.createResponseChannels()
 	var messages []*liveness.LivenessMessage
@@ -57,10 +54,13 @@ func (liveSrv *LivenessService) broadcastLivenessMsgs(respChans LivenessResponse
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	version, readErr := liveSrv.system.Globals.ReadVersion()
+	if readErr != nil { return readErr }
+
 	var broadcastWG sync.WaitGroup
 
 	message := &liveness.LivenessMessage{
-		GlobalVersion: liveSrv.system.VersionTag,
+		GlobalVersion: version,
 		Sender: &liveness.NodeInfo{
 			Host: liveSrv.system.Host,
 			NodeId: liveSrv.system.NodeId[:],
@@ -87,11 +87,11 @@ func (liveSrv *LivenessService) broadcastLivenessMsgs(respChans LivenessResponse
 					liveSrv.connPool.PutConnection(neighbor.Host, conn)
 					return
 				default:
-					res, _ := liveSrv.clientLivenessRPC(conn, message, neighbor)
+					res, _ := liveSrv.clientLivenessRPC(conn, version, message, neighbor)
 					
 					respChans.Messages <- res
 
-					if res.GlobalVersion > liveSrv.system.VersionTag {
+					if res.GlobalVersion > version {
 						liveSrv.zLog.Debug("higher version found on response")
 					}
 
@@ -108,6 +108,7 @@ func (liveSrv *LivenessService) broadcastLivenessMsgs(respChans LivenessResponse
 
 func (liveSrv *LivenessService) clientLivenessRPC(
 	conn *grpc.ClientConn,
+	version uint64,
 	message *liveness.LivenessMessage,
 	neighbor *liveness.NodeInfo,
 ) (*liveness.LivenessMessage, error) {
@@ -136,7 +137,7 @@ func (liveSrv *LivenessService) clientLivenessRPC(
 		liveSrv.connPool.CloseConnections(neighbor.Host)
 
 		res = &liveness.LivenessMessage{
-			GlobalVersion: liveSrv.system.VersionTag,
+			GlobalVersion: version,
 			Sender: &liveness.NodeInfo{ Host: neighbor.Host, NodeId: neighbor.NodeId, OK: false },
 		}
 	}

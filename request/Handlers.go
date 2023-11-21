@@ -6,41 +6,10 @@ import "net/http"
 import "github.com/sirgallo/athn/common/utils"
 
 
-//=========================================== Snapshot Service Handlers
-
-/*
-	Register Command Route
-		path: /command
-		method: POST
-
-		request body:
-			{
-				action: "string",
-				payload: {
-					collection: "string",
-					value: "string"
-				}
-			}
-
-		response body:
-			{
-				collection: "string",
-				key: "string" | nil,
-				value: "string" | nil
-			}
-
-	ingest requests and pass from the HTTP Service to the replicated log service if leader,
-	or the relay service if a follower.
-		1.) append a both a unique identifier for the request as well as the current node that the request was sent to.
-		2.) a channel for the request to be returned is created and mapped to the request id in the mapping of response channels
-		2.) A context with timeout is initialized and the route either receives the response back and returns to the client,
-			or the timeout is exceeded and failure is retuned to the client
-*/
-
-func (reqService *RequestService[T, U]) RegisterCommandRoute() {
+func (reqService *RequestService) RegisterCommandRoute() {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost { 
-			var requestData *ClientRequest[T]
+			var requestData *ClientRequest
 
 			decodeErr := json.NewDecoder(r.Body).Decode(&requestData)
 			if decodeErr != nil {
@@ -54,7 +23,7 @@ func (reqService *RequestService[T, U]) RegisterCommandRoute() {
 				return
 			}
 
-			clientResponseChannel := make(chan *ClientResponse[U])
+			clientResponseChannel := make(chan *ClientResponse)
 			reqService.clientMappedResponseChannels.Store(hash, clientResponseChannel)
 
 			requestData.RequestID = hash
@@ -64,7 +33,7 @@ func (reqService *RequestService[T, U]) RegisterCommandRoute() {
 
 			reqService.clientMappedResponseChannels.Delete(hash)
 
-			response := &ClientResponse[U]{ Result: responseData.Result, Success: responseData.Success }
+			response := &ClientResponse{ Result: responseData.Result, Success: responseData.Success }
 			if responseData.ErrorMsg != nil { response.ErrorMsg = responseData.ErrorMsg }
 
 			responseJSON, encErr := json.Marshal(response)

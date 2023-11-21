@@ -2,8 +2,6 @@ package system
 
 import "errors"
 import "os"
-import "runtime"
-import "sync/atomic"
 
 import "github.com/sirgallo/logger"
 
@@ -11,22 +9,20 @@ import "github.com/sirgallo/athn/common/utils"
 import "github.com/sirgallo/athn/proto/liveness"
 
 
-//=========================================== System
-
-
-const NAME = "System"
-var Log = logger.NewCustomLog(NAME)
-
-func NewSystem(seed []byte) (*System, error) {
+func NewSystem(opts *SystemOpts) (*System, error) {
 	hostname, hostnameErr := os.Hostname()
 	if hostnameErr != nil { return nil, hostnameErr }
 
-	nodeId, hashErr := utils.GenerateSHA256HashWithSeed(seed)
+	nodeId, hashErr := utils.GenerateSHA256HashWithSeed(opts.Seed)
 	if hashErr != nil { return nil, hashErr }
 
 	return &System{
 		Host: hostname,
 		NodeId: nodeId,
+		PropagationFactor: 10,
+		Globals: opts.Globals,
+		State: opts.State,
+		zLog: logger.NewCustomLog(NAME),
 	}, nil
 }
 
@@ -43,15 +39,6 @@ func (sys *System) SetNodeId(nodeId [32]byte) bool {
 	defer sys.SystemMutex.Unlock()
 
 	sys.NodeId = nodeId
-	return true
-}
-
-func (sys *System) UpdateVersionTag(updatedVTag uint64) bool {
-	for updatedVTag == uint64(sys.VersionTag) + 1 &&
-	 ! atomic.CompareAndSwapUint64(&sys.VersionTag, sys.VersionTag, updatedVTag) {
-		runtime.Gosched()
-	}
-
 	return true
 }
 

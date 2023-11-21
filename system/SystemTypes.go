@@ -1,23 +1,33 @@
 package system
 
 import "sync"
-// import "unsafe"
 
+import "github.com/sirgallo/logger"
+
+import "github.com/sirgallo/athn/globals"
+import "github.com/sirgallo/athn/state"
+
+
+type SystemOpts struct {
+	Seed []byte
+	Globals *globals.Globals
+	State *state.State
+}
 
 type System struct {
+	zLog *logger.CustomLog
 	Host string
 	NodeId[32]byte
-	VersionTag uint64
-	// proposalChannel chan *proposal.Proposal
-	
-	PropagationFactor int
+	PropagationFactor uint64
 
-	Neighbors *sync.Map //map[[32]byte] *liveness.NodeInfo
-	PreviousNeighbors *sync.Map // map[[32]byte] struct{}
+	Neighbors *sync.Map
+	PreviousNeighbors *sync.Map
 
-	// updateVersion *unsafe.Pointer
-	
-	// StateMachine *statemachine.StateMachine
+	Globals *globals.Globals
+	State *state.State
 
 	SystemMutex sync.Mutex
 }
+
+
+const NAME = "System"
