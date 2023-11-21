@@ -1,10 +1,13 @@
 package liveness
 
+import "bytes"
 import "context"
 import "sync"
 import "google.golang.org/grpc"
 
+import "github.com/sirgallo/athn/common/serialize"
 import "github.com/sirgallo/athn/common/utils"
+import "github.com/sirgallo/athn/globals"
 import "github.com/sirgallo/athn/proto/liveness"
 
 
@@ -54,13 +57,14 @@ func (liveSrv *LivenessService) broadcastLivenessMsgs(respChans LivenessResponse
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	version, readErr := liveSrv.system.Globals.ReadVersion()
+	version, readErr := liveSrv.system.Globals.GetVersion()
 	if readErr != nil { return readErr }
 
+	sVersion := serialize.SerializeBigInt(version, globals.GLOBAL_V_BYTE_LENGTH)
 	var broadcastWG sync.WaitGroup
 
 	message := &liveness.LivenessMessage{
-		GlobalVersion: version,
+		VersionTag: sVersion,
 		Sender: &liveness.NodeInfo{
 			Host: liveSrv.system.Host,
 			NodeId: liveSrv.system.NodeId[:],
@@ -87,11 +91,11 @@ func (liveSrv *LivenessService) broadcastLivenessMsgs(respChans LivenessResponse
 					liveSrv.connPool.PutConnection(neighbor.Host, conn)
 					return
 				default:
-					res, _ := liveSrv.clientLivenessRPC(conn, version, message, neighbor)
+					res, _ := liveSrv.clientLivenessRPC(conn, sVersion, message, neighbor)
 					
 					respChans.Messages <- res
 
-					if res.GlobalVersion > version {
+					if bytes.Compare(res.VersionTag, sVersion) == 1 {
 						liveSrv.zLog.Debug("higher version found on response")
 					}
 
@@ -108,7 +112,7 @@ func (liveSrv *LivenessService) broadcastLivenessMsgs(respChans LivenessResponse
 
 func (liveSrv *LivenessService) clientLivenessRPC(
 	conn *grpc.ClientConn,
-	version uint64,
+	sVersion []byte,
 	message *liveness.LivenessMessage,
 	neighbor *liveness.NodeInfo,
 ) (*liveness.LivenessMessage, error) {
@@ -137,7 +141,7 @@ func (liveSrv *LivenessService) clientLivenessRPC(
 		liveSrv.connPool.CloseConnections(neighbor.Host)
 
 		res = &liveness.LivenessMessage{
-			GlobalVersion: version,
+			VersionTag: sVersion,
 			Sender: &liveness.NodeInfo{ Host: neighbor.Host, NodeId: neighbor.NodeId, OK: false },
 		}
 	}

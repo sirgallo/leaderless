@@ -9,7 +9,7 @@ service Liveness {
 }
 
 message LivenessMessage {
-  uint64 GlobalVersion = 1;
+  bytes VersionTag = 1;
   NodeInfo Sender = 3;
   repeated NodeInfo NeighborInfo = 4;
 }

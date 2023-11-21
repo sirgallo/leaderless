@@ -9,7 +9,7 @@ service Proposal {
 }
 
 message ProposalRequest {
-  uint64 VersionTag = 1;
+  bytes VersionTag = 1;
   bytes Proposer = 2;
   ProposalPayload Payload = 3;
 }

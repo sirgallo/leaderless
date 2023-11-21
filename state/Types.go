@@ -12,7 +12,6 @@ type State struct {
 }
 
 type KeyValuePair struct {
-	Version *uint64
 	Key []byte
 	Value []byte
 }

@@ -2,7 +2,21 @@ package serialize
 
 import "errors"
 import "encoding/binary"
+import "math/big"
 
+
+func SerializeBigInt(in *big.Int, totalBytes int) []byte {
+	buf := make([]byte, totalBytes)
+	return in.FillBytes(buf)
+}
+
+func DeserializeBigInt(data []byte, totalBytes int) (*big.Int, error) {
+	if len(data) != totalBytes { return nil, errors.New("invalid data length for total bytes provided") }
+	
+	num := new(big.Int)
+	num.SetBytes(data)
+	return num, nil
+}
 
 func SerializeUint64(in uint64) []byte {
 	buf := make([]byte, 8)

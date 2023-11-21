@@ -4,8 +4,6 @@ import "errors"
 
 import bolt "go.etcd.io/bbolt"
 
-import "github.com/sirgallo/athn/common/serialize"
-
 
 func (state *State) Get(op *StatePayload) (*StateResponse, error) {
 	var response *StateResponse
@@ -17,17 +15,10 @@ func (state *State) Get(op *StatePayload) (*StateResponse, error) {
 
 		switch {
 			case isInputValid:
-				sVal := sBucket.Get(op.KVPair.Key)
-				version, value, desErr := deserializeVersionedValue(op.KVPair.Key, sVal)
-				if desErr != nil { return desErr }
-
+				val := sBucket.Get(op.KVPair.Key)
 				sResp := &StateResponse{
 					RequestID: op.RequestID,
-					KVPair: KeyValuePair{ 
-						Version: &version,
-						Key: op.KVPair.Key,
-						Value: value,
-					},
+					KVPair: KeyValuePair{ Key: op.KVPair.Key, Value: val },
 				}
 	
 				response = sResp
@@ -52,23 +43,17 @@ func (state *State) Put(op *StatePayload) (*StateResponse, error) {
 		isInputValid := func() bool {
 			return op.Operation == PUT && 
 				op.KVPair.Key != nil && 
-				op.KVPair.Value != nil && 
-				op.KVPair.Version != nil
+				op.KVPair.Value != nil
 		}()
 
 		switch {
 			case isInputValid:
-				sVal := serializeVersionIntoValue(*op.KVPair.Version, op.KVPair.Value)
-				putErr := sBucket.Put(op.KVPair.Key, sVal)
+				putErr := sBucket.Put(op.KVPair.Key, op.KVPair.Value)
 				if putErr != nil { return putErr }
 
 				sResp := &StateResponse{
 					RequestID: op.RequestID,
-					KVPair: KeyValuePair{ 
-						Version: op.KVPair.Version,
-						Key: op.KVPair.Key,
-						Value: op.KVPair.Value,
-					},
+					KVPair: KeyValuePair{ Key: op.KVPair.Key, Value: op.KVPair.Value },
 				}
 
 				response = sResp
@@ -99,10 +84,7 @@ func (state *State) Delete(op *StatePayload) (*StateResponse, error) {
 
 				sResp := &StateResponse{
 					RequestID: op.RequestID,
-					KVPair: KeyValuePair{ 
-						Version: op.KVPair.Version,
-						Key: op.KVPair.Key,
-					},
+					KVPair: KeyValuePair{ Key: op.KVPair.Key },
 				}
 
 				response = sResp
@@ -117,18 +99,4 @@ func (state *State) Delete(op *StatePayload) (*StateResponse, error) {
 
 	response.RequestID = op.RequestID
 	return response, nil
-}
-
-func serializeVersionIntoValue(version uint64, value []byte) []byte {
-	sVersion := serialize.SerializeUint64(version)
-	return append(sVersion, value...)
-}
-
-func deserializeVersionedValue(key, data []byte) (uint64, []byte, error) {
-	if len(data) < 9 { return 0, nil, errors.New("version serialized data of incorrect length") }
-	
-	version, desErr := serialize.DeserializeUint64(data[:8])
-	if desErr != nil { return 0, nil, desErr }
-	
-	return version, data[8:], nil
 }

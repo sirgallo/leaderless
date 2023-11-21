@@ -2,6 +2,8 @@ package liveness
 
 import "context"
 
+import "github.com/sirgallo/athn/common/serialize"
+import "github.com/sirgallo/athn/globals"
 import "github.com/sirgallo/athn/proto/liveness"
 
 
@@ -17,11 +19,12 @@ func (liveSrv *LivenessService) LivenessRPC(
 		return true
 	})
 
-	version, readErr := liveSrv.system.Globals.ReadVersion()
+	version, readErr := liveSrv.system.Globals.GetVersion()
 	if readErr != nil { return nil, readErr }
 
+	sVersion := serialize.SerializeBigInt(version, globals.GLOBAL_V_BYTE_LENGTH)
 	resp := &liveness.LivenessMessage{
-		GlobalVersion: version,
+		VersionTag: sVersion,
 		Sender: &liveness.NodeInfo{
 			Host: liveSrv.system.Host,
 			NodeId: liveSrv.system.NodeId[:],

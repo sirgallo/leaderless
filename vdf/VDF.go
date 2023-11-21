@@ -4,8 +4,8 @@ import "math"
 import "math/big"
 
 
-func VDF(version uint64, prevSuccessfulWrites uint64) *big.Int {
-	vNextBig := big.NewInt(int64(version))
+func VDF(previousVTag *big.Int, prevSuccessfulWrites uint64) *big.Int {
+	vNextBig := previousVTag
 
 	p := new(big.Int)
 	p.SetString(P, 16)
