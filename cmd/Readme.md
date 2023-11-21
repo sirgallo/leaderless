@@ -7,4 +7,4 @@ docker-compose -f ./cmd/<app-to-run>/docker-compose.yml up --build
 ```
 
 apps to run:
-  - raft
+  - athn
