@@ -250,7 +250,7 @@ The global state machine shared by the network of nodes will utilize a global ve
 
 Once a version has been accepted by the majority nodes in the cluster using both the `redundancy threshold` and `reputation based conflict resolution`, the volatile state change proposal is persisted to the state machine and the version is incremented. All new and retried requests will then create a new state proposal and then compute the vdf for the current version + 1, appending the verification to the state proposal before propagating it to new nodes in the network. Each node that receives the verification can check it to ensure that it is valid before deciding whether or not to update its own state proposal or to reject the proposal.
 
-For computing the VDF, repeated squaring is chosen. No additional hashing is done on the VDF to apply randomness for security. 
+For computing the VDF, repeated squaring is chosen. No additional hashing is done on the VDF to apply randomness for security. However, a dynamic difficuly strategy is imployed to create a form of rate limiting. When a single node accumulates successful writes, the difficulty of solving the next vdf increases. This is done to give other nodes in the cluster a chance to submit proposals and introduces a built in rate limiting feature. Once a different node has written to the state machine, the node being rate limited has the total accumulated successful writes set to $0$.
 
 `Variables`
 
@@ -281,11 +281,11 @@ $$
 \end{align}
 $$
 
-$N_{s}$ is calculated by taking $N_{base}$ and multiplying it by the square root of the current $s$, so $N_{s}$ will grow slowly for the first few iterations then exponentially grow.
+$N_{s}$ is calculated by taking $N_{base}$, where after each sequential successul write to the state machine causes a gradual growth in the difficulty of the vdf.
 
 $$
 \begin{align}
-  &N_{s} = N_{base}\times{\sqrt{s}}
+  &N_{s} = N_{base}\times{log_{10}{s}}
 \end{align}
 $$
 

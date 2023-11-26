@@ -15,8 +15,8 @@ func NewRequestService(opts *RequestServiceOpts) *RequestService {
 		system: opts.System,
 		zLog: *logger.NewCustomLog(NAME),
 		clientMappedResponseChannels: sync.Map{},
-		RequestBuffer: make(chan *ClientRequest, RequestChannelSize),
-		ResponseBuffer: make(chan *ClientResponse, ResponseChannelSize),
+		RequestBuffer: make(chan *ClientRequest, REQ_BUFFER_SIZE),
+		ResponseBuffer: make(chan *ClientResponse, RESP_BUFFER_SIZE),
 	}
 
 	reqService.RegisterCommandRoute()

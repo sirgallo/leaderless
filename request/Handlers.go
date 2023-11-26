@@ -48,5 +48,5 @@ func (reqService *RequestService) RegisterCommandRoute() {
 		} else { http.Error(w, "method not allowed", http.StatusMethodNotAllowed) }
 	}
 
-	reqService.mux.HandleFunc(CommandRoute, handler)
+	reqService.mux.HandleFunc(COMMAND_ROUTE, handler)
 }

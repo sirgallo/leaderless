@@ -47,8 +47,10 @@ func (propSrv *ProposeService) generateProposal(payload *state.StatePayload, pre
 		},
 	}
 
-	calculatedVerification := vdf.VDF(version, prevSuccessWrites)
-	proposal.VersionTag = serialize.SerializeBigInt(calculatedVerification, globals.GLOBAL_V_BYTE_LENGTH)
+	output, proof, computeErr := vdf.ComputeVDF(version, &prevSuccessWrites)
+	if computeErr != nil { return nil, computeErr }
+	
+	proposal.VersionTag = serialize.SerializeBigInt(output, globals.GLOBAL_V_BYTE_LENGTH)
 	
 	return proposal, nil
 }

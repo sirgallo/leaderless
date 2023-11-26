@@ -9,8 +9,6 @@ import "github.com/sirgallo/logger"
 import "github.com/sirgallo/athn/state"
 import "github.com/sirgallo/athn/system"
 
-type Payload = comparable
-type Result = comparable
 
 type RequestServiceOpts struct {
 	Port int
@@ -42,7 +40,10 @@ type ClientResponse struct {
 }
 
 const NAME = "Request Service"
-const CommandRoute = "/command"
-const RequestChannelSize = 1000000
-const ResponseChannelSize = 1000000
-const HTTPTimeout = 2 * time.Second
+const COMMAND_ROUTE = "/command"
+const HTTP_TIMEOUT = 2 * time.Second
+
+const (
+	REQ_BUFFER_SIZE = 1000000
+	RESP_BUFFER_SIZE = 1000000
+)
